@@ -1,0 +1,4 @@
+ID,title,description,price,stock,sku,category,rating,createdAt,createdBy,modifiedAt,modifiedBy
+p0000001-0000-0000-0000-000000000001,Laptop Pro,High performance laptop,1200.00,10,SKU-001,Electronics,4.50
+p0000001-0000-0000-0000-000000000002,Wireless Mouse,Ergonomic wireless mouse,35.00,50,SKU-002,Electronics,4.20
+p0000001-0000-0000-0000-000000000003,Desk Lamp,LED desk lamp,45.00,30,SKU-003,Furniture,4.00

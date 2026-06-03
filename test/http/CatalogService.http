@@ -1,0 +1,52 @@
+@server=http://localhost:4004
+@username=alice
+@password=
+
+
+### Products
+# @name Products_GET
+GET {{server}}/odata/v4/catalog/Products
+Authorization: Basic {{username}}:{{password}}
+
+
+### Products
+# @name Products_POST
+POST {{server}}/odata/v4/catalog/Products
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  # "ID": "10055241-9320-457e-bd38-3c5145cc594a",
+  "title": "title-10055241",
+  "description": "description-10055241",
+  "price": 45059.16,
+  "stock": 40,
+  "sku": "SKU-10055241",
+  "category": "category-10055241",
+  "rating": 8.03,
+  "priceWithTax": 8417997.21
+  # "createdAt": "2017-05-25T15:00:00.000Z",
+  # "createdBy": "createdBy.5zio9@example.org",
+  # "modifiedAt": "2016-04-30T15:00:00.000Z",
+  # "modifiedBy": "modifiedBy.5zio9@example.net"
+}
+
+
+### Products
+# @name Products_PATCH
+PATCH {{server}}/odata/v4/catalog/Products/3f61c132-c2ee-4ea0-b74f-704d1cb83e35
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "price": 9945059.16,
+  "stock": 4000000,
+  "sku": "sku-10055241"
+}
+
+
+### Products
+# @name Products_DELETE
+DELETE {{server}}/odata/v4/catalog/Products/3f61c132-c2ee-4ea0-b74f-704d1cb83e35
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
