@@ -51,7 +51,6 @@ entity Products : cuid, managed {
   sku          : String(50);
   category     : String(100);
   rating       : Decimal(3, 2) default 0;
-  priceWithTax : Decimal(9, 2);   // computed field — filled in after READ
 }
 ```
 
@@ -71,56 +70,35 @@ p0000001-0000-0000-0000-000000000003,Desk Lamp,LED desk lamp,45.00,30,SKU-003,Fu
 ### `srv/cat-service.cds`
 
 ```cds
-using my.annotations as db from '../db/schema';
+using { my.annotations as db } from '../db/schema';
 
 service CatalogService {
-  entity Products as projection on db.Products;
+
+    @title: 'Product Catalog'
+    entity Products as projection on db.Products {
+        *,
+        null as priceWithTax : Decimal(9, 2) //Declare virtual fields
+    }
+
 }
 
 annotate CatalogService.Products with {
+    ID          @readonly;
+    createdAt   @readonly;
+    modifiedAt  @readonly;
+    rating      @readonly;
 
-  // @readonly: field is silently ignored if sent by the client
-  // Applies to both CREATE and UPDATE
-  ID          @readonly;
-  createdAt   @readonly;
-  createdBy   @readonly;
-  modifiedAt  @readonly;
-  modifiedBy  @readonly;
-  rating      @readonly;       // rating is calculated server-side
+    title       @mandatory @title : 'Product Name';
+    price       @mandatory @title : 'Unit Price' @assert.range:[0.01,99999.99];
+    sku         @assert.format : 'SKU-[A-Z0-9]{3,10}' @mandatory @title : 'SKU' @description : 'Unique product identifier for inventory tracking';
 
-  // @Core.Computed: marks the field as server-computed
-  // Pair with @readonly to prevent client writes
-  priceWithTax @Core.Computed @readonly;
-
-  // @mandatory: returns 400 on CREATE if the field is null or empty
-  // No JS validation code needed
-  title  @mandatory;
-  price  @mandatory;
-  sku    @mandatory;
-
-  // @assert.range: validates a numeric range
-  price @assert.range: [0.01, 99999.99];
-  stock @assert.range: [0, 9999];
-
-  // @assert.range with enum: restricts to a fixed set of values
-  category @assert.range enum {
-    Electronics;
-    Furniture;
-    Clothing;
-    Books;
-  };
-
-  // @assert.format: validates against a regex pattern
-  // SKU must match SKU- followed by 3-10 uppercase letters or digits
-  sku @assert.format: 'SKU-[A-Z0-9]{3,10}';
-
-  // @title / @description: UI metadata — visible in $metadata and Fiori Preview
-  title        @title: 'Product Name';
-  price        @title: 'Unit Price (USD)';
-  stock        @title: 'Stock Quantity';
-  description  @title: 'Description'  @UI.MultiLineText;
-  sku          @title: 'SKU'  @description: 'Unique product identifier for inventory tracking';
+    stock       @title : 'Stock Quantity' @assert.range:[0,9999];
+    description @UI.MultiLineText;
+    // @Core.Computed: A marker for computed fields
+    // Informs the client that this field is computed by the server
+    priceWithTax  @Core.Computed @readonly;
 }
+
 ```
 
 ---
